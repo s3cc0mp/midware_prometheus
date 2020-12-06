@@ -1,0 +1,76 @@
+{
+    "out_Dir": "test",
+        "url": "http://dev.k8s:31390",
+        "configs": [
+        {
+            "ip": "172.16.1.99",
+            "exporter": "kubelet",
+            "probe": "kubernetes_probe",
+            "metrics": {
+                "kubernetes_cpu_usage_sum": "sum(rate(container_cpu_usage_seconds_total{container!=\"POD\",pod!=\"\"}[3m]))",
+                "kubernetes_cpu_usage_request": "sum(kube_pod_container_resource_requests_cpu_cores)",
+                "kubernetes_memory_usage_sum": "sum(rate(container_memory_usage_bytes{container!=\"POD\",pod!=\"\"}[3m]))",
+                "kubernetes_memory_usage_request": "sum(kube_pod_container_resource_requests_memory_bytes)",
+                "kubernetes_network_transmit_bytes_total": "sum(rate(container_network_transmit_bytes_total{container!=\"POD\"}[3m]))",
+                "kubernetes_network_receive_bytes_total": "sum(rate(container_network_receive_bytes_total{container!=\"POD\"}[3m]))",
+                "kubernetes_container_restart_total": "sum(kube_pod_container_status_restarts_total)"
+            },
+            "write_metrics": [
+            ]
+        },
+        {
+            "ip": "172.16.1.99",
+            "exporter": "kubelet",
+            "probe": "kubernetes_container_probe",
+            "metrics": {
+                "kubernetes_container_cpu_usage": "rate(container_cpu_usage_seconds_total{container!=\"POD\",pod!=\"\"}[3m])",
+                "kubernetes_container_memory_usage": "rate(container_memory_usage_bytes{container!=\"POD\",pod!=\"\"}[3m])"
+            },
+            "write_metrics": [
+                "namespace",
+            "pod",
+            "container"
+            ]
+        },
+        {
+            "ip": "172.16.1.99",
+            "exporter": "kubelet",
+            "probe": "kubernetes_pod_probe",
+            "metrics": {
+                "kubernetes_pod_cpu_usage": "sum(rate(container_cpu_usage_seconds_total{container!=\"POD\",pod!=\"\"}[3m])) by (pod)",
+                "kubernetes_pod_memory_usage": "sum(rate(container_memory_usage_bytes{container!=\"POD\",pod!=\"\"}[3m])) by (pod)"
+            },
+            "write_metrics": [
+                "pod"
+            ]
+
+        },
+        {
+            "ip": "172.16.1.99",
+            "exporter": "kubelet",
+            "probe": "kubernetes_node_probe",
+            "metrics": {
+                "kubernetes_node_allocable_pods": "kube_node_status_allocatable_pods",
+                "kubernetes_node_allocable_cpu_core": "kube_node_status_allocatable_cpu_cores",
+                "kubernetes_node_allocable_memory": "kube_node_status_allocatable_memory_bytes"
+            },
+            "write_metrics": [
+                "node"
+            ]
+
+        },
+        {
+            "ip": "172.16.1.99",
+            "exporter": "kubelet",
+            "probe": "kubernetes_namespace_probe",
+            "metrics": {
+                "kubernetes_namespace_cpu_usage": "sum(rate(container_cpu_usage_seconds_total{container!=\"POD\",namespace!=\"\"}[3m])) by (namespace)",
+                "kubernetes_namespace_memory_usage": "sum(rate(container_memory_usage_bytes{container!=\"POD\",namespace!=\"\"}[3m])) by (namespace)"
+            },
+            "write_metrics": [
+                "namespace"
+            ]
+
+        }
+    ]
+}

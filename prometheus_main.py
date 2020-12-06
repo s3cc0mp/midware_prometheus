@@ -39,8 +39,9 @@ class D(daemon):
         self.config_setup()
         prometheus_probe = self.config["prometheus_probe"]
         while True:
-            prom.wait_till_second(0)
-            prom.write_to_csv(prometheus_probe["configs"], prometheus_probe["out_Dir"])
+            for i in range(0, 60, 15):
+                prom.wait_till_second(i)
+                prom.write_to_csv(prometheus_probe["configs"], prometheus_probe["out_Dir"])
 
 
 if __name__ == "__main__":

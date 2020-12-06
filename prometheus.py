@@ -4,41 +4,41 @@ import csv
 import json
 import os.path
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
+import pprint
 
-def write_to_csv(configs, out_dir):
+def write_to_csv(configs, url, out_dir):
     now = time.time()
     title_time = datetime.strftime(datetime.fromtimestamp(now), '%Y%m%d_%H_%M')
     date_time = datetime.strftime(datetime.fromtimestamp(now), '%Y%m%d_%H:%M:%S')
+    
+    pp = pprint.PrettyPrinter(indent = 4)
 
     for config in configs:
-        ip, port = config['ip'], config['port']
-        monitor_metrics = config['monitor_metrics']
+        ip = config['ip']
         exporter = config['exporter']
-        directory = config['directory']
-        url = 'http://' + ip + ':' + str(port) + '/metrics'
-        with urllib.request.urlopen(url) as res:
-            metrics = res.read().decode()
-        metrics_str = metrics.split('\n')
-
-        for metric_str in metrics_str:
-            monitor_flag = False
-            for monitor_metric in monitor_metrics:
-                if metric_str.startswith(monitor_metric + ' ') or metric_str.startswith(monitor_metric + '{'):
-                    monitor_flag = True
-                    break
-            if monitor_flag: # last one
-                metric_name = ' '.join(metric_str.split(' ')[:-1])
-                metric_value = metric_str.split(' ')[-1]
-                csv_file = os.path.join(out_dir, directory, exporter + '@' + title_time + '.csv')
-                if not os.path.exists(os.path.join(out_dir, directory)):
-                    os.mkdir(os.path.join(out_dir, directory))
-                if not os.path.exists(csv_file):
-                    with open(csv_file, 'w', newline = '') as csvfile:
-                        pass
-                with open(csv_file, 'a', newline = '') as csvfile:
-                    csv_writer = csv.writer(csvfile)
-                    csv_writer.writerow([metric_value, metric_name, ip, date_time])
+        probe = config['probe']
+        metrics = config['metrics']
+        write_metrics = config['write_metrics']
+        csv_file = os.path.join(out_dir, probe + '@' + title_time + '.csv')
+        for metric_name, metric_query in metrics.items():
+            prom_url = url + '/api/v1/query?query=' + urllib.parse.quote(metric_query)
+            with urllib.request.urlopen(prom_url) as res:
+                metrics_json = json.loads(res.read().decode())
+            result = metrics_json['data']['result']
+            if metrics_json['status'] == 'success':
+                for res in result:
+                    submetric_field = []
+                    for submetric in write_metrics:
+                        if not submetric in res['metric']:
+                            break
+                        else:
+                            submetric_field.append(res['metric'][submetric])
+                    else:
+                        value = res['value']
+                        with open(csv_file, 'a', newline = '') as csvfile:
+                            csv_writer = csv.writer(csvfile)
+                            csv_writer.writerow([value[1], metric_name, *submetric_field, ip, date_time])
 
 def wait_till_second(second):
     second_str = '{:02d}'.format(second)
@@ -47,13 +47,8 @@ def wait_till_second(second):
         if curr_date == second_str:
             return
         
-
 if __name__ == '__main__':
-    with open('prom_config.json') as f:
+    with open('config.json') as f:
         configs = json.load(f)
-    configs = configs['configs']
-    while True:
-        wait_till_second(0)
-        write_to_csv(config)
+    write_to_csv(configs['configs'], configs['url'], configs['out_Dir'])
 
-        
