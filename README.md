@@ -139,9 +139,9 @@ The name format of the csv file is shown below:
 | - | -| - | - | - | - |
 | **Example 1** |  kubernetes_probe | @ | 20201204_16_08 | . | csv |
 | **Example 2** |  kubernetes_node_probe | @ | 20201204_16_10 | . | csv |
-:::info
-:memo: Date format is `"%Y%m%d_%H_%M"`
-:::
+
+* :memo: Date format is `"%Y%m%d_%H_%M"`
+
 
 The format of the content is shown below:
 
@@ -149,9 +149,9 @@ The format of the content is shown below:
 | - | -| - | - | - | - | - | - |
 | **Example 1** | 0.010182706464034987 | kubernetes_container_cpu_usage | kube-system (namespace) | calico-node (container) | calico-node-2pnlr (pod) | 172.16.1.99 | 20201204_16:08:17 |
 | **Example 2** | 110 | kubernetes_node_allocable_pods | 1.dev.k8s (node) | | | 172.16.1.99 | 20201204_16:10:13 |
-:::info
-:memo: Date format is `"%Y%m%d_%H:%M:%S"`
-:::
+
+* :memo: Date format is `"%Y%m%d_%H:%M:%S"`
+
 
 ### Sample
 
