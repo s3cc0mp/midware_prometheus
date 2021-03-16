@@ -268,7 +268,7 @@ The following is the metric I used in this project：
     * **Metric**: `sum(rate(apiserver_request_total{code=~"[45].."}[3m]))`
     * **Description**: Collect all the failed requests from kube-apiserver.
 
-* ::note:: Note that some of the above metrics calculate the average value under 3 minutes. The interval can be set to some other suitable number.
+* ::memo:: Note that some of the above metrics calculate the average value under 3 minutes. The interval can be set to some other suitable number.
 
 ## Reference
 1. [Prometheus documentation](https://prometheus.io/docs/introduction/overview/)
