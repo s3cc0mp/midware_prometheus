@@ -230,6 +230,9 @@ The following is the metric I used in this project：
 * **`kubernetes_network_receive_bytes_total`**
     * **Metric**: `sum(rate(container_network_receive_bytes_total{container!="POD"}[3m]))`
     * **Description**: Collect the cumulative received data volume of the entire Kubernetes in the past 3 minutes.
+* **`kubernetes_network_transmit_bytes_total`**
+    * **Metric**: `sum(rate(container_network_transmit_bytes_total{container!="POD"}[3m]))`
+    * **Description**: Collect the cumulative received data volume of the entire Kubernetes in the past 3 minutes.
 * **`kubernetes_container_restart_total`**
     * **Metric**: `sum(kube_pod_container_status_restarts_total)`
     * **Description**: Collect the cumulative number of Pod restarts in the entire Kubernetes.
@@ -264,6 +267,8 @@ The following is the metric I used in this project：
 * **`kubernetes_apiserver_failed_requests`**
     * **Metric**: `sum(rate(apiserver_request_total{code=~"[45].."}[3m]))`
     * **Description**: Collect all the failed requests from kube-apiserver.
+
+* ::note:: Note that some of the above metrics calculate the average value under 3 minutes. The interval can be set to some other suitable number.
 
 ## Reference
 1. [Prometheus documentation](https://prometheus.io/docs/introduction/overview/)
